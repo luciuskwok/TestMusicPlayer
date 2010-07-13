@@ -1,0 +1,28 @@
+﻿This is the project that goes with a bug report I submitted to Apple's Radar, #8183973. 
+
+Title: iTunes sync breaks MPMusicPlayerController iPodMusicPlayer 
+
+Classification: Serious bug.
+
+Summary: MPMusicPlayerController, used to control iPod music playback from this app, stops working properly after an iTunes sync. The app no longer receives notification of changes to the nowPlaying item and the transport state, and queuing up a new playlist no longer works. Reloading the iPod Music Player has no effect. 
+
+Steps to reproduce:
+	1. Build and Run or Debug the attached project. Select a playlist and verify that it plays.
+	2. Tap the toolbar buttons to verify that they control the iPod playback and update the Now Playing display.
+	3. Connect the device to a computer via USB and sync it in iTunes.
+	4. After the sync is complete, you should still be in this app. 
+	5. The toolbar buttons continue to control the playback, but the app no longer receives Music Player notifications, and selecting a playlist no longer works.
+	6. Switching to another app, putting this one in the background, and then switching back does not fix this problem.
+	7. The Reload button in the app unregisters notifications, creates a new Music Player, and registers again for notifications. It also reloads the list of playlists and the Now Playing display. 
+
+Expected Results: The Music Player should continue to work after an iTunes sync as it does before, without having to kill the app and relaunch it. Music Player notifications should continue to be delivered to the app, and selecting a playlist should start playing that playlist.
+
+Actual Results: Music Player notifications are not delivered and the call to setQueueWithItemCollection: is ignored. 
+
+Regression: Killing the app and relaunching it fixes the bug. This problem also crops up in non-multitasking devices, but quitting this app and relaunching it fixes it.
+
+Notes: Attached is a test project for verifying the issue.
+Some of the Console messages include:
+* Unable to send CPDistributedMessagingCenter message named registerForServerDiedNotifications to com.apple.MPMusicPlayerControllerInternal: (ipc/send) timed out
+* MediaPlayer: Message playbackState timed out.
+* MediaPlayer: Message nowPlayingItem timed out.
